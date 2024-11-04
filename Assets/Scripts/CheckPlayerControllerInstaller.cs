@@ -1,12 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
+using NS.PlayerControllerScripts;
 using UnityEngine;
-
 
 public class CheckPlayerControllerInstaller
 {
-    private IPlayerController _controller;
-    private CheckPlayerControllerInstaller(IPlayerController player)
+    private PlayerController _controller;
+    private CheckPlayerControllerInstaller(PlayerController player)
     {
         Debug.Log(player.GetType());
     }

@@ -1,10 +1,11 @@
+using NS.GameEventsScripts;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
 
-public class MenuController : MonoInstaller
+public class MenuController : MonoBehaviour
 {
     [SerializeField] private Button tutorialEndButton;
 
@@ -14,11 +15,11 @@ public class MenuController : MonoInstaller
     }
     void Start()
     {
-        GameEvents.current.onTutorialEnd += EnableButton;
+        //GameEvents.current.onTutorialEnd += EnableButton;
     }
     private void OnDestroy()
     {
-        GameEvents.current.onTutorialEnd -= EnableButton;
+        //GameEvents.current.onTutorialEnd -= EnableButton;
     }
 
     public void EnableButton()

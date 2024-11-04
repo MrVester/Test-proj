@@ -1,33 +1,36 @@
-using System.Collections;
-using System.Collections.Generic;
+using NS.GameEventsScripts;
 using UnityEngine;
-using Zenject.Asteroids;
+using Zenject;
 
 public class RedSquareController : MonoBehaviour
 {
     [SerializeField] private GameObject redSquare;
     private BoxCollider2D spawnArea;
     private int _count=3;
-
+    private GameEvents _gameEvents;
 
 
     private void Awake()
     {
       spawnArea = GetComponent<BoxCollider2D>();
     }
+
+    [Inject]
+    public void Construct(GameEvents gameEvents) 
+    {
+        _gameEvents = gameEvents;
+    }
+
     private void Start()
     {
         redSquare.transform.position = GetRandomPos();
-        GameEvents.current.onPlayerMoveFinished += MoveRedSquare;
+        _gameEvents.onPlayerMoveFinished += MoveRedSquare;
     }
     private void OnDestroy()
     {
-        GameEvents.current.onPlayerMoveFinished -= MoveRedSquare;
+        _gameEvents.onPlayerMoveFinished -= MoveRedSquare;
     }
-    void Update()
-    {
-        
-    }
+
     public void MoveRedSquare()
     {
         redSquare.transform.position = GetRandomPos();
@@ -35,7 +38,7 @@ public class RedSquareController : MonoBehaviour
 
         if (_count == 0)
         {
-            GameEvents.current.EndTutorial();
+            _gameEvents.EndTutorial();
         }
     }
     

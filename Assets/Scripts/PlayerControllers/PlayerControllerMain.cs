@@ -1,8 +1,21 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 
-public class PlayerControllerMain : IPlayerController
+namespace NS.PlayerControllerScripts
 {
-    public float Duration { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+    public class PlayerControllerMain : PlayerController, ITickable
+    {
+        public PlayerControllerMain(Camera camera, Transform player) : base(camera, player) { }
+
+        public void Tick()
+        {
+            Debug.Log("Tick main");
+            if (Input.GetMouseButtonDown(0)) 
+            {
+                OnMouseClicked();
+            }
+
+            MovePlayer();
+        }
+    }
 }

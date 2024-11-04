@@ -1,61 +1,66 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using System;
 using UnityEngine;
 using Zenject;
+using NS.GameEventsScripts;
 
-
-public class PlayerControllerTutorial:MonoInstaller, IPlayerController
+namespace NS.PlayerControllerScripts
 {
-    [SerializeField] private float moveDuration=1f;
-    private Camera _mainCam;
-    private RaycastHit2D _rayHit;
-    protected Vector3 _redSquarePos;
-
-    public float Duration
+    public class PlayerControllerTutorial : PlayerController, ITickable, IDisposable
     {
-        get { return moveDuration; }
-        set { moveDuration = value; }
-    }
+        private RaycastHit2D _rayHit;
+        private int _tutorialQuadsClicked = 0;
 
-    void Start()
-    {
-        _mainCam = Camera.main;
-    }
+        public PlayerControllerTutorial(Camera camera, Transform player) : base(camera, player) { }
 
-    async void Update()
-    {
-        if (Input.GetMouseButtonDown(0))
+        public override void SubscribeEvents(GameEvents gameEvents) 
         {
-            if(IsRedSquare())
-            await MovePlayer(_redSquarePos, Duration);
-
+            base.SubscribeEvents(gameEvents);
+            _gameEvents.onPlayerMoveFinished += CheckIsTutorialOver;
         }
-    }
 
-    public bool IsRedSquare()
-    {
-        _rayHit = Physics2D.GetRayIntersection(_mainCam.ScreenPointToRay(Input.mousePosition));
-        if (!_rayHit)
-            return false;
-
-        if (!_rayHit.collider.CompareTag("RedSquare"))
-            return false;
-
-        _redSquarePos = _rayHit.collider.gameObject.transform.position;
-        return true;
-    }
-
-    public async Task MovePlayer(Vector2 finalPos, float duration)
-    {
-        float timer = 0f;
-        while (timer < duration)
+        public void Dispose()
         {
-            float t = timer / duration;
-            transform.position = Vector3.Lerp(transform.position, finalPos, t * t);
-            timer += Time.deltaTime;
-            await Task.Yield();
+            _gameEvents.onPlayerMoveFinished -= CheckIsTutorialOver;
         }
-        GameEvents.current.PlayerMoveFinished();
+
+        public bool IsRedSquare()
+        {
+            _rayHit = Physics2D.GetRayIntersection(_camera.ScreenPointToRay(Input.mousePosition));
+            if (!_rayHit)
+                return false;
+
+            if (!_rayHit.collider.CompareTag("RedSquare"))
+                return false;
+
+            _targetPosition = _rayHit.collider.gameObject.transform.position;
+            return true;
+        }
+
+        public void Tick()
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                OnMouseClicked();
+            }
+
+            MovePlayer();
+        }
+
+        protected override void OnMouseClicked()
+        {
+            if (IsRedSquare())
+            {
+                _tutorialQuadsClicked++;
+                base.OnMouseClicked();
+            }
+        }
+
+        private void CheckIsTutorialOver() 
+        {
+            if (_tutorialQuadsClicked >= 3) 
+            {
+                _gameEvents?.controllerChangeInDependencyContainer.OnPlayerControllerRebindCalled?.Invoke();
+            }
+        }
     }
 }

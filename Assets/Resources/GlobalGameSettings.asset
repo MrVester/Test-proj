@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55d077f117f4d66438be469adc39e39d, type: 3}
   m_Name: GlobalGameSettings
   m_EditorClassIdentifier: 
-  _isTutorialCompleted: 1
+  _isTutorialCompleted: 0

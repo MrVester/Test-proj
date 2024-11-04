@@ -58,9 +58,13 @@ public class PlayerInstaller : MonoInstaller
     {
         PlayerControllerMain playerControllerMain = new(_camera, _player);
         playerControllerMain.Init(_playerMovementSpeed);
-        _playerController = playerControllerMain;
-        Container.BindInterfacesAndSelfTo<PlayerControllerMain>().FromInstance(playerControllerMain);
-        Container.Rebind<PlayerController>().FromInstance(_playerController);
+        Container.Resolve<TickableManager>().Add(playerControllerMain);
+
+        PlayerControllerTutorial playerControllerTutorial = (PlayerControllerTutorial)Container.Resolve<PlayerController>();
+        Container.Resolve<TickableManager>().Remove(playerControllerTutorial);
+        playerControllerTutorial.Dispose();
+
+        Container.Rebind<PlayerController>().FromInstance(playerControllerMain);
         Container.Resolve<PlayerController>().SubscribeEvents(_gameEvents);
         _gameEvents.controllerChangeInDependencyContainer.OnPlayerControllerRebinded?.Invoke(Container.Resolve<PlayerController>());
     }

@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using Zenject;
 using NS.GameEventsScripts;
+using UnityEditor;
 
 namespace NS.PlayerControllerScripts
 {

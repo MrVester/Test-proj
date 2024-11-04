@@ -48,11 +48,12 @@ public class PlayerControllerTutorial:MonoInstaller, IPlayerController
 
     public async Task MovePlayer(Vector2 finalPos, float duration)
     {
+        var startingPos = transform.position;
         float timer = 0f;
         while (timer < duration)
         {
             float t = timer / duration;
-            transform.position = Vector3.Lerp(transform.position, finalPos, t * t);
+            transform.position = Vector3.Lerp(startingPos, finalPos, t);
             timer += Time.deltaTime;
             await Task.Yield();
         }
